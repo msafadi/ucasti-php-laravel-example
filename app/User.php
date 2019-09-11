@@ -6,6 +6,8 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use DB;
+
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
@@ -16,7 +18,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'name', 'username', 'email', 'password',
+        'name', 'username', 'email', 'password', 'avatar', 'mobile',
     ];
 
     /**
@@ -63,12 +65,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function likes()
     {
-        $this->hasMany(Like::class, 'user_id', 'id');
+        return $this->hasMany(Like::class, 'user_id', 'id');
     }
     
     public function posts()
     {
-        $this->hasMany(Post::class, 'user_id', 'id');
+        return $this->hasMany(Post::class, 'user_id', 'id');
     }
 
     public function isFollowing($user)
@@ -78,5 +80,27 @@ class User extends Authenticatable implements MustVerifyEmail
             return false;
         }
         return true;
+    }
+
+    public function timelinePosts($count = 20)
+    {
+        $posts = Post::with(['user', 'usersLikes'])
+                    ->where('posts.user_id', $this->id)
+                    ->orWhereRaw('posts.user_id IN (SELECT followers.follower_id from followers where followers.following_id = ?)', [$this->id])
+                    //->orderBy('posts.created_at', 'DESC')
+                    ->latest()
+                    ->paginate($count);
+        
+        return $posts;
+    }
+
+    public function routeNotificationForNexmo()
+    {
+        return $this->mobile;
+    }
+
+    public function routeNotificationForMail()
+    {
+        return $this->email;
     }
 }

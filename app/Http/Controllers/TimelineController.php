@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TimelineController extends Controller
 {
@@ -14,8 +15,12 @@ class TimelineController extends Controller
     {
         $user = \Auth::user();
 
+        //return Post::withoutGlobalScope('public')->get();
+        //return Post::status('private')->get();
+
         return view('timeline.index')->with([
-            'posts' => Post::where('user_id', $user->id)->paginate(20),
+            'posts' => $user->timelinePosts(),
+            //'posts' => DB::table('posts')->get(),
             'user' => $user,
         ]);
     }
@@ -28,7 +33,8 @@ class TimelineController extends Controller
         }
 
         return view('timeline.index')->with([
-            'posts' => Post::where('user_id', $user->id)->paginate(20),
+            'posts' => $user->timelinePosts(),
+            //'posts' => $user->posts,
             'user' => $user,
         ]);
     }

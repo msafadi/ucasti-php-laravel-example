@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Like;
+use App\Notifications\LikeNotification;
+use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class LikesController extends Controller
 {
@@ -24,10 +27,21 @@ class LikesController extends Controller
             ]);
         }
 
+        $post_id = $request->post('post_id');
+        $post = Post::findOrFail($post_id);
+        $user = $request->user();
+
         Like::create([
-            'post_id' => $request->post('post_id'),
-            'user_id' => $request->user()->id, // Auth::id()
+            'post_id' => $post->id,
+            'user_id' => $user->id, // Auth::id()
         ]);
+
+        $post->user->notify(new LikeNotification($post, $user));
+
+        /*Notification::send(User::all(), new LikeNotification($post, $user));
+        Notification::route('mail', 'engmsafadi@gmail.com')
+                    ->route('nexmo', '+97259988547')
+                    ->notify(new LikeNotification($post, $user));*/
 
         return response()->json([
             'success' => 1,

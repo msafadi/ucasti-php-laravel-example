@@ -4,7 +4,7 @@
 <div class="container">
     <header class="d-flex flex-wrap align-items-center">
         <div class="media align-items-center">
-            <img src="https://via.placeholder.com/80" class="rounded-circle mr-3">
+            <img height="80" src="{{ route('avatar', [basename($user->avatar)]) }}" class="rounded-circle mr-3">
             <div class="media-body">
                 <h2 class="mb-0 pb-0">{{ $user->name }} <small class="text-muted">{{ '@' . $user->username }}</small></h2>
             </div>

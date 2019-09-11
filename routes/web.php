@@ -13,15 +13,21 @@
 
 Route::middleware('auth')->group(function() {
     Route::get('/', 'TimelineController@index')->name('timeline');
+    Route::get('/notifications', 'NotificationsController@index')->name('notifications');
+    Route::get('/notifications/read/{id}', 'NotificationsController@read')->name('notifications.read');
+    
     Route::post('/posts', 'PostsController@store')->name('posts.store');
     Route::post('/likes', 'LikesController@store')->name('likes.store');
 
-    Route::get('/u/{username}', 'TimelineController@profile')->name('profile');
     Route::post('/follow/{user_id}', 'TimelineController@follow')->name('follow');
 
     Route::get('/u/{username}/followers', 'TimelineController@followers')->name('followers');
     Route::get('/u/{username}/following', 'TimelineController@following')->name('following');
 });
+
+Route::get('/u/{username}', 'TimelineController@profile')->name('profile');
+
+Route::get('user/avatar/{image}', 'AvatarController@image')->name('avatar');
 
 
 /*Route::group([
