@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\NexmoMessage;
 
@@ -39,7 +40,8 @@ class LikeNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database', MyNexmoChannel::class];
+        return ['mail', 'database', 'broadcast'];
+        //return ['mail', 'database', MyNexmoChannel::class];
     }
 
     /**
@@ -80,6 +82,17 @@ class LikeNotification extends Notification
         return sprintf('%s Liked your post', $this->user->name);
     }
 
+    public function toBroadcast($notifiable)
+    {
+        return (new BroadcastMessage([
+            'icon' => 'like',
+            'url' => route('timeline'),
+            'post_id' => $this->post->id,
+            'time' => now()->diffForHumans(),
+            'message' => sprintf('%s Liked your post "%s"', $this->user->name, $this->post->content),
+        ]));
+    }
+
     /**
      * Get the array representation of the notification.
      *
@@ -89,7 +102,15 @@ class LikeNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'icon' => 'like',
+            'url' => route('timeline'),
+            'post_id' => $this->post->id,
+            'message' => sprintf('%s Liked your post "%s"', $this->user->name, $this->post->content),
         ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'Notification';
     }
 }
