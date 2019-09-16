@@ -12,6 +12,14 @@
 */
 
 Route::middleware('auth')->group(function() {
+    Route::resource('/api-token', 'Auth\ApiTokenController')
+        ->names([
+            'index' => 'api-token.list',
+        ])
+        ->except(['show']);
+    Route::put('/api-token/{id}/regenerate', 'Auth\ApiTokenController@regenerate')->name('api-token.regenerate');
+
+
     Route::get('/', 'TimelineController@index')->name('timeline');
     Route::get('/notifications', 'NotificationsController@index')->name('notifications');
     Route::get('/notifications/read/{id}', 'NotificationsController@read')->name('notifications.read');

@@ -16,3 +16,15 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::middleware('apitoken')->namespace('Api')->group(function() {
+    Route::post('/login', 'LoginController@login');
+
+    Route::middleware('authtoken')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::middleware('authtoken')->get('/posts', function (Request $request) {
+        return $request->user()->posts;
+    });
+});

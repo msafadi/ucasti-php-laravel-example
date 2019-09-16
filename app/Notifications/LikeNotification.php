@@ -108,9 +108,4 @@ class LikeNotification extends Notification
             'message' => sprintf('%s Liked your post "%s"', $this->user->name, $this->post->content),
         ];
     }
-
-    public function broadcastAs()
-    {
-        return 'Notification';
-    }
 }

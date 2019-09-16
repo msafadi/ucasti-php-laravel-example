@@ -73,6 +73,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Post::class, 'user_id', 'id');
     }
 
+    public function apiTokens()
+    {
+        return $this->hasMany(ApiToken::class, 'user_id', 'id');
+    }
+
+    public function authTokens()
+    {
+        return $this->hasMany(AuthToken::class, 'user_id', 'id');
+    }
+
     public function isFollowing($user)
     {
         $following = $this->following()->where('follower_id', $user->id)->first();
