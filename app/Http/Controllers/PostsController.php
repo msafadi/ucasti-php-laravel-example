@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
 use Illuminate\Http\Request;
 use App\Post;
 
@@ -28,6 +29,8 @@ class PostsController extends Controller
         $post->content = $request->input('content');
         $post->user_id = $request->user()->id;
         $post->save();
+
+        broadcast(new PostCreated($post))->toOthers();
 
         
         return redirect()->route('timeline')->with('message', 'Post created!');

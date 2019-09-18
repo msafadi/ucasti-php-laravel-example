@@ -26,7 +26,7 @@ class LoginController extends Controller
                 $user->authTokens()->create([
                     'token' => $token,
                     'ip' => $request->ip(),
-                    'agent' => $_SERVER['HTTP_USER_AGENT'],
+                    'agent' => $request->header('User-Agent'), //$_SERVER['HTTP_USER_AGENT'],
                 ]);
 
                 return response()->json([

@@ -9,7 +9,7 @@
                 <h2 class="mb-0 pb-0">{{ $user->name }} <small class="text-muted">{{ '@' . $user->username }}</small></h2>
             </div>
         </div>
-        @if (Auth::id() != $user->id)
+        @if (Auth::check() && Auth::id() != $user->id)
         <form method="post" action="{{ route('follow', [$user->id]) }}" class="form-inline ml-3">
             @csrf
             <input type="hidden" name="user_id" value="{{ $user->id }}">
@@ -25,6 +25,7 @@
 
     <div class="row">
         <div class="col-md-8">
+            @if (Auth::check() && Auth::id() == $user->id)
             <div class="my-2">
                 <h3 class="h5">Create Post</h3>
                 <form action="{{ route('posts.store') }}" method="post">
@@ -36,6 +37,7 @@
                 </form>
             </div>
             <hr>
+            @endif
             <div class="my-2">
                 <h3 class="h5">Timeline</h3>
                 @foreach ($posts as $post)

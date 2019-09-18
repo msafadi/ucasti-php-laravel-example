@@ -44,3 +44,9 @@ Echo.private('User.' + userid.content)
         </a>`);
         //console.log(notification);
     });
+
+Echo.private('posts')
+    .listen('.created', (data) => {
+        alert(data.post_content);
+        console.log(data.post_content);
+    });

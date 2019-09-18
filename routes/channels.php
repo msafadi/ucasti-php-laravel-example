@@ -18,3 +18,7 @@ Broadcast::channel('User.{id}', function ($user, $id) {
 Broadcast::channel('ChatRoom.{id}', function ($user, $id) {
     return (int) $user->inRoom($id);
 });
+
+Broadcast::channel('posts', function ($user) {
+    return true;
+});

@@ -7,13 +7,23 @@ use App\Post;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class TimelineController extends Controller
 {
     //
     public function index()
     {
+        $post = Post::find(3);
+        /*if (!Gate::allows('posts.edit', $post)) {
+            abort(403);
+        }*/
+        //$this->authorize('update', $post);
+
         $user = \Auth::user();
+        if (!$user->can('update', $post)) {
+            abort(403);
+        }       
 
         //return Post::withoutGlobalScope('public')->get();
         //return Post::status('private')->get();

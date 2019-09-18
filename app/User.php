@@ -83,8 +83,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(AuthToken::class, 'user_id', 'id');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'users_roles');
+    }
+
     public function isFollowing($user)
     {
+        if (!$user) {
+            return false;
+        }
         $following = $this->following()->where('follower_id', $user->id)->first();
         if (!$following) {
             return false;
@@ -117,5 +125,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function receivesBroadcastNotificationsOn()
     {
         return 'User.' . $this->id;
+    }
+
+    public function hasPermission($code)
+    {
+        $count = DB::table('users_roles')
+            ->join('roles_permissions', 'users_roles.role_id', '=', 'roles_permissions.role_id')
+            ->join('permissions', 'permissions.id', '=', 'roles_permissions.permission_id')
+            ->where('users_roles.user_id', '=', $this->id)
+            ->where('permissions.code', '=', $code)
+            ->count();
+
+        if ($count) {
+            return true;
+        }
+
+        return false;
     }
 }
